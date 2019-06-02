@@ -23,7 +23,27 @@ public class TestSpeed {
         data = outputStream.toByteArray();
         System.out.println(data.length);
 
-       /* long startTime = System.currentTimeMillis();
+        testWritingImage();
+
+
+    }
+
+    static void testWritingImage() throws IOException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(byteBufferWork());
+        BufferedImage bImage = ImageIO.read(bis);
+        ImageIO.write(bImage, "jpg", new File("output1.jpg") );
+
+        ByteArrayInputStream bis2 = new ByteArrayInputStream(msgPackWork());
+        BufferedImage bImage2 = ImageIO.read(bis2);
+        ImageIO.write(bImage2, "jpg", new File("output2.jpg") );
+
+        ByteArrayInputStream bis3 = new ByteArrayInputStream(pureByteArrayWork());
+        BufferedImage bImage3 = ImageIO.read(bis3);
+        ImageIO.write(bImage3, "jpg", new File("output3.jpg") );
+    }
+
+    static void testSpeed() throws IOException {
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < 1000; i++) {
             byteBufferWork();
         }
@@ -43,14 +63,10 @@ public class TestSpeed {
             pureByteArrayWork();
         }
 
-        System.out.println("pureByteArrayWork: "+(System.currentTimeMillis()-startTime));*/
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(pureByteArrayWork());
-        BufferedImage bImage2 = ImageIO.read(bis);
-        ImageIO.write(bImage2, "jpg", new File("output.jpg") );
+        System.out.println("pureByteArrayWork: "+(System.currentTimeMillis()-startTime));
     }
 
-    static void byteBufferWork(){
+    static byte[] byteBufferWork(){
         ByteBuffer buffer = ByteBuffer.allocate(data.length+12);
         buffer.putInt(1);
         buffer.putInt(2);
@@ -64,11 +80,12 @@ public class TestSpeed {
         byte[] arr = new byte[int3];
         buffer1.get(arr);
 
+        return arr;
         //System.out.println(int1+" "+int2+" "+int3);
 
     }
 
-    static void msgPackWork() throws IOException {
+    static byte[] msgPackWork() throws IOException {
 
         MessageBufferPacker packer = MessagePack.newDefaultBufferPacker();
         packer.packInt(1);
@@ -84,6 +101,7 @@ public class TestSpeed {
         int int2 = unpacker.unpackInt();
         int int3 = unpacker.unpackBinaryHeader();
         byte[] arr = unpacker.readPayload(int3);
+        return arr;
     }
 
     static byte[] pureByteArrayWork(){
