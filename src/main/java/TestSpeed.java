@@ -14,16 +14,18 @@ import java.util.Arrays;
 public class TestSpeed {
 
     static byte[] data;
+    static int count = 10000;
 
     public static void main(String[] args) throws IOException {
-        File jpegFile = new File("/home/anton/large.jpg");
+        File jpegFile = new File("input.jpg");
         BufferedImage image = ImageIO.read(jpegFile);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(image, "jpg", outputStream);
         data = outputStream.toByteArray();
         System.out.println(data.length);
 
-        testWritingImage();
+        //testWritingImage();
+        testSpeed();
 
 
     }
@@ -44,14 +46,14 @@ public class TestSpeed {
 
     static void testSpeed() throws IOException {
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < count; i++) {
             byteBufferWork();
         }
         System.out.println("ByteBuffer: "+(System.currentTimeMillis()-startTime));
 
         startTime = System.currentTimeMillis();
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < count; i++) {
             msgPackWork();
         }
 
@@ -59,7 +61,7 @@ public class TestSpeed {
 
         startTime = System.currentTimeMillis();
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < count; i++) {
             pureByteArrayWork();
         }
 
@@ -120,7 +122,7 @@ public class TestSpeed {
         System.arraycopy(result, 8, result1, 0, 4);
         int int3 = fromByte(result1);
 
-        System.out.println(int1+" "+int2+" "+int3);
+        //System.out.println(int1+" "+int2+" "+int3);
 
         byte[] resultData = new byte[int3];
         System.arraycopy(result, 12, resultData, 0, int3);
